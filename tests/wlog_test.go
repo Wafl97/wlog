@@ -2,6 +2,7 @@ package tests
 
 import (
 	"testing"
+
 	"wlog"
 	"wlog/level"
 )
