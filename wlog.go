@@ -75,7 +75,7 @@ func (logger *Logger) Debug(message string) {
 
 func (logger *Logger) Debugf(format string, args ...any) {
 	if logger.level.order >= levelDebug.order {
-		logger.out(logger.level, fmt.Sprintf("[%s] %s\n", logger.name, fmt.Sprintf(format, args...)))
+		logger.out(logger.level, fmt.Sprintf("[%s] %s", logger.name, fmt.Sprintf(format, args...)))
 	}
 }
 
@@ -87,7 +87,7 @@ func (logger *Logger) Info(message string) {
 
 func (logger *Logger) Infof(format string, args ...any) {
 	if logger.level.order >= levelInfo.order {
-		logger.out(logger.level, fmt.Sprintf("[%s] %s\n", logger.name, fmt.Sprintf(format, args...)))
+		logger.out(logger.level, fmt.Sprintf("[%s] %s", logger.name, fmt.Sprintf(format, args...)))
 	}
 }
 
@@ -99,7 +99,7 @@ func (logger *Logger) Warn(message string) {
 
 func (logger *Logger) Warnf(format string, args ...any) {
 	if logger.level.order >= levelWarn.order {
-		logger.out(logger.level, fmt.Sprintf("[%s] %s\n", logger.name, fmt.Sprintf(format, args...)))
+		logger.out(logger.level, fmt.Sprintf("[%s] %s", logger.name, fmt.Sprintf(format, args...)))
 	}
 }
 
@@ -111,6 +111,6 @@ func (logger *Logger) Error(message string) {
 
 func (logger *Logger) Errorf(format string, args ...any) {
 	if logger.level.order >= levelError.order {
-		logger.out(logger.level, fmt.Sprintf("[%s] %s\n", logger.name, fmt.Sprintf(format, args...)))
+		logger.out(logger.level, fmt.Sprintf("[%s] %s", logger.name, fmt.Sprintf(format, args...)))
 	}
 }
