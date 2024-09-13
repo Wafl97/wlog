@@ -5,8 +5,9 @@ import (
 	"os"
 	"path"
 	"time"
-	"wlog/level"
-	"wlog/util"
+
+	"github.com/Wafl97/wlog/level"
+	"github.com/Wafl97/wlog/util"
 )
 
 var (
