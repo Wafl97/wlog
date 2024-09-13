@@ -59,8 +59,8 @@ type Logger struct {
 	out   func(level Level, s string) error
 }
 
-func New(name string, out func(level Level, s string) error) Logger {
-	return Logger{
+func New(name string, out func(level Level, s string) error) *Logger {
+	return &Logger{
 		name:  name,
 		level: levelInfo,
 		out:   out,
