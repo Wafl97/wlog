@@ -6,8 +6,8 @@ import (
 	"path"
 	"time"
 
-	"github.com/Wafl97/wlog/level"
-	"github.com/Wafl97/wlog/util"
+	"wlog/level"
+	"wlog/util"
 )
 
 var (

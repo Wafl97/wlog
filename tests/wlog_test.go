@@ -3,8 +3,8 @@ package tests
 import (
 	"testing"
 
-	"github.com/Wafl97/wlog"
-	"github.com/Wafl97/wlog/level"
+	"wlog"
+	"wlog/level"
 )
 
 func TestLogger(t *testing.T) {
