@@ -4,12 +4,10 @@ import (
 	"testing"
 
 	"github.com/Wafl97/wlog"
-	"github.com/Wafl97/wlog/level"
 )
 
 func TestLogger(t *testing.T) {
-	logger := wlog.New("TESTING", wlog.LogToConsole)
-	logger.SetLevel(level.Debug)
+	logger := wlog.New("TESTING", wlog.LogToConsoleAndFile)
 
 	logger.Debug("Debug")
 	logger.Debugf("%s\n", "Debugf")
