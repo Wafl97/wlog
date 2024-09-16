@@ -1,8 +1,6 @@
 package level
 
-import (
-	"github.com/Wafl97/wlog/colors"
-)
+import "wlog/colors"
 
 type Level struct {
 	Order uint8

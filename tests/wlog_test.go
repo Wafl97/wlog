@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Wafl97/wlog"
-	"github.com/Wafl97/wlog/format"
-	"github.com/Wafl97/wlog/level"
+	"wlog"
+	"wlog/format"
+	"wlog/level"
 )
 
 func TestLogger(t *testing.T) {

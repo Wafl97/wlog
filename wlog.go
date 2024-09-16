@@ -6,9 +6,9 @@ import (
 	"path"
 	"time"
 
-	"github.com/Wafl97/wlog/colors"
-	"github.com/Wafl97/wlog/format"
-	"github.com/Wafl97/wlog/level"
+	"wlog/colors"
+	"wlog/format"
+	"wlog/level"
 )
 
 var defaultErrorLogger = New("WLOG", LogToConsole)
