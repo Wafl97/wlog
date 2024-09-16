@@ -6,9 +6,9 @@ import (
 	"path"
 	"time"
 
-	"wlog/colors"
-	"wlog/format"
-	"wlog/level"
+	"github.com/Wafl97/wlog/colors"
+	"github.com/Wafl97/wlog/format"
+	"github.com/Wafl97/wlog/level"
 )
 
 var defaultErrorLogger = New("WLOG", LogToConsole)
@@ -32,7 +32,7 @@ var (
 		}
 	}
 
-	LogToConsole func(logLevel level.Level, message any) = func(logLevel level.Level, message any) {
+	LogToConsole = func(logLevel level.Level, message any) {
 		fmt.Printf("%s%s%s", logLevel.Color, message, colors.Reset)
 	}
 
