@@ -6,33 +6,41 @@ import (
 	"path"
 	"time"
 
+	"github.com/Wafl97/wlog/colors"
 	"github.com/Wafl97/wlog/format"
 	"github.com/Wafl97/wlog/level"
-	"github.com/Wafl97/wlog/util"
 )
+
+var defaultErrorLogger = New("WLOG", LogToConsole)
 
 // Output functions
 var (
-	LogToFile func(logLevel level.Level, message any) = func(logLevel level.Level, message any) {
-		file, err := os.OpenFile(path.Join("logs", time.Now().Format(time.DateOnly)+".log"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			LogToConsole(level.Error, err.Error()+"\n")
-			return //fmt.Errorf("logger out: %w", err)
-		}
-		defer file.Close()
-		if _, err = file.WriteString(fmt.Sprintf("[%-5s] %s", logLevel.Name, message)); err != nil {
-			LogToConsole(level.Error, err)
-			return //fmt.Errorf("logger out: %w", err)
+	LogToFile = func(filename string) func(logLevel level.Level, message any) {
+		dir, _ := path.Split(filename)
+		os.MkdirAll(dir, 0644)
+		return func(logLevel level.Level, message any) {
+			file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if err != nil {
+				defaultErrorLogger.Error(err)
+				return
+			}
+			defer file.Close()
+			if _, err = file.WriteString(fmt.Sprintf("%v", message)); err != nil {
+				defaultErrorLogger.Error(err)
+				return
+			}
 		}
 	}
 
 	LogToConsole func(logLevel level.Level, message any) = func(logLevel level.Level, message any) {
-		fmt.Printf("%s%s%s", logLevel.Color, message, util.Reset)
+		fmt.Printf("%s%s%s", logLevel.Color, message, colors.Reset)
 	}
 
-	LogToConsoleAndFile func(logLevel level.Level, message any) = func(logLevel level.Level, message any) {
-		LogToConsole(logLevel, message)
-		LogToFile(logLevel, message)
+	LogToConsoleAndFile = func(filename string) func(logLevel level.Level, message any) {
+		return func(logLevel level.Level, message any) {
+			LogToFile(filename)(logLevel, message)
+			LogToConsole(logLevel, message)
+		}
 	}
 )
 
@@ -50,16 +58,19 @@ var (
 		return fmt.Sprintf("[%-5s] [%s] %v", logLevel.Name, logger.name, message)
 	}
 	_LevelNameTime logFormat = func(logger *Logger, logLevel level.Level, message any) string {
-		return fmt.Sprintf("[%-5s] [%s] [%s] %v", logLevel.Name, logger.name, time.Now().Format(time.TimeOnly), message)
+		return fmt.Sprintf("[%-5s] [%s] [%s] %v",
+			logLevel.Name, logger.name, time.Now().Format(time.TimeOnly), message)
 	}
 	_LevelTime logFormat = func(logger *Logger, logLevel level.Level, message any) string {
-		return fmt.Sprintf("[%-5s] [%s] %v", logLevel.Name, time.Now().Format(time.TimeOnly), message)
+		return fmt.Sprintf("[%-5s] [%s] %v",
+			logLevel.Name, time.Now().Format(time.TimeOnly), message)
 	}
 	_Name logFormat = func(logger *Logger, logLevel level.Level, message any) string {
 		return fmt.Sprintf("[%s] %v", logger.name, message)
 	}
 	_NameTime logFormat = func(logger *Logger, logLevel level.Level, message any) string {
-		return fmt.Sprintf("[%s] [%s] %v", logger.name, time.Now().Format(time.TimeOnly), message)
+		return fmt.Sprintf("[%s] [%s] %v",
+			logger.name, time.Now().Format(time.TimeOnly), message)
 	}
 	_Time logFormat = func(logger *Logger, logLevel level.Level, message any) string {
 		return fmt.Sprintf("[%s] %v", time.Now().Format(time.TimeOnly), message)
@@ -74,7 +85,7 @@ var (
 
 // SetDefaultFormat sets the default format used when creating a new logger.
 // The chosen format is only applied to loggers created after calling this.
-// Use the SetFormat method on existing loggers to change their formats.
+// Use the SetLogFormat method on existing loggers to change their formats.
 func SetDefaultFormat(logFormat format.LogFormat) {
 	switch logFormat {
 	case format.None:
@@ -98,6 +109,9 @@ func SetDefaultFormat(logFormat format.LogFormat) {
 	}
 }
 
+// SetDefaultLevel sets the default level used when creating a new logger.
+// The chosen level is only applied to loggers created after calling this.
+// Use the SetLevel method on existing loggers to change their level.
 func SetDefaultLevel(logLevel level.Level) {
 	_DefaultLevel = logLevel
 }
@@ -106,18 +120,18 @@ type Logger struct {
 	name      string
 	level     level.Level
 	logFormat logFormat
-	out       func(logLevel level.Level, message any)
+	output    func(logLevel level.Level, message any)
 }
 
-func New(name string, out func(logLevel level.Level, message any)) *Logger {
-	if out == nil {
-		out = LogToConsole
+func New(name string, output func(logLevel level.Level, message any)) *Logger {
+	if output == nil {
+		output = LogToConsole
 	}
 	return &Logger{
 		name:      name,
 		level:     _DefaultLevel,
 		logFormat: _DefaultFormat,
-		out:       out,
+		output:    output,
 	}
 }
 
@@ -154,48 +168,48 @@ func (logger *Logger) SetLevel(level level.Level) {
 
 func (logger *Logger) Debug(message any) {
 	if logger.level.Order >= level.Debug.Order {
-		logger.out(level.Debug, logger.applyFormat(level.Info, message)+"\n")
+		logger.output(level.Debug, logger.applyFormat(level.Debug, message)+"\n")
 	}
 }
 
 func (logger *Logger) Debugf(format string, args ...any) {
 	if logger.level.Order >= level.Debug.Order {
-		logger.out(level.Debug, logger.applyFormat(level.Info, fmt.Sprintf(format, args...)))
+		logger.output(level.Debug, logger.applyFormat(level.Debug, fmt.Sprintf(format, args...)))
 	}
 }
 
 func (logger *Logger) Info(message any) {
 	if logger.level.Order >= level.Info.Order {
-		logger.out(level.Info, logger.applyFormat(level.Info, message)+"\n")
+		logger.output(level.Info, logger.applyFormat(level.Info, message)+"\n")
 	}
 }
 
 func (logger *Logger) Infof(format string, args ...any) {
 	if logger.level.Order >= level.Info.Order {
-		logger.out(level.Info, logger.applyFormat(level.Info, fmt.Sprintf(format, args...)))
+		logger.output(level.Info, logger.applyFormat(level.Info, fmt.Sprintf(format, args...)))
 	}
 }
 
 func (logger *Logger) Warn(message any) {
 	if logger.level.Order >= level.Warn.Order {
-		logger.out(level.Warn, logger.applyFormat(level.Info, message)+"\n")
+		logger.output(level.Warn, logger.applyFormat(level.Warn, message)+"\n")
 	}
 }
 
 func (logger *Logger) Warnf(format string, args ...any) {
 	if logger.level.Order >= level.Warn.Order {
-		logger.out(level.Warn, logger.applyFormat(level.Info, fmt.Sprintf(format, args...)))
+		logger.output(level.Warn, logger.applyFormat(level.Warn, fmt.Sprintf(format, args...)))
 	}
 }
 
 func (logger *Logger) Error(message any) {
 	if logger.level.Order >= level.Error.Order {
-		logger.out(level.Error, logger.applyFormat(level.Info, message)+"\n")
+		logger.output(level.Error, logger.applyFormat(level.Error, message)+"\n")
 	}
 }
 
 func (logger *Logger) Errorf(format string, args ...any) {
 	if logger.level.Order >= level.Error.Order {
-		logger.out(level.Error, logger.applyFormat(level.Info, fmt.Sprintf(format, args...)))
+		logger.output(level.Error, logger.applyFormat(level.Error, fmt.Sprintf(format, args...)))
 	}
 }
