@@ -135,7 +135,7 @@ func New(name string, output func(logLevel level.Level, message any)) *Logger {
 	}
 }
 
-func (logger *Logger) SetLogFormat(logFormat format.LogFormat) {
+func (logger *Logger) SetFormat(logFormat format.LogFormat) {
 	switch logFormat {
 	case format.None:
 		logger.logFormat = _None

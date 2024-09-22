@@ -12,8 +12,9 @@ import (
 )
 
 func TestLogger(t *testing.T) {
-	logger := wlog.New("TESTING", wlog.LogToConsoleAndFile(path.Join("test", "logs", time.Now().Format(time.DateOnly)+".log")))
-	logger.SetLogFormat(format.LevelNameTime)
+	logger := wlog.New("TESTING",
+		wlog.LogToConsoleAndFile(path.Join("test", "logs", time.Now().Format(time.DateOnly)+".log")))
+	logger.SetFormat(format.LevelNameTime)
 	logger.SetLevel(level.Debug)
 
 	logger.Debug("Debug")
@@ -44,21 +45,21 @@ func TestFormatting(t *testing.T) {
 	myLogger := wlog.New("MY LOGGER", func(logLevel level.Level, message any) {
 		logCatcher = append(logCatcher, fmt.Sprintf("%v", message))
 	})
-	myLogger.SetLogFormat(format.None)
+	myLogger.SetFormat(format.None)
 	myLogger.Info("Is this working?")
-	myLogger.SetLogFormat(format.Level)
+	myLogger.SetFormat(format.Level)
 	myLogger.Info("Is this working?")
-	myLogger.SetLogFormat(format.LevelName)
+	myLogger.SetFormat(format.LevelName)
 	myLogger.Info("Is this working?")
-	myLogger.SetLogFormat(format.LevelNameTime)
+	myLogger.SetFormat(format.LevelNameTime)
 	myLogger.Info("Is this working?")
-	myLogger.SetLogFormat(format.LevelTime)
+	myLogger.SetFormat(format.LevelTime)
 	myLogger.Info("Is this working?")
-	myLogger.SetLogFormat(format.Name)
+	myLogger.SetFormat(format.Name)
 	myLogger.Info("Is this working?")
-	myLogger.SetLogFormat(format.NameTime)
+	myLogger.SetFormat(format.NameTime)
 	myLogger.Info("Is this working?")
-	myLogger.SetLogFormat(format.Time)
+	myLogger.SetFormat(format.Time)
 	myLogger.Info("Is this working?")
 
 	for index := range expected {
