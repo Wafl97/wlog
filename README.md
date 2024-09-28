@@ -72,7 +72,7 @@ Have a way to use a single function call to set the formatting for all existing 
 
 ## Usage
 
-Add to go project with following the command:
+Add to go project with the following command:
 
 `go get github.com/Wafl97/wlog`
 
