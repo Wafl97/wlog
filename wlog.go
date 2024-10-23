@@ -57,13 +57,24 @@ var (
 	_LevelName logFormat = func(logger *Logger, logLevel level.Level, message any) string {
 		return fmt.Sprintf("[%-5s] [%s] %v", logLevel.Name, logger.name, message)
 	}
+	_NameLevel logFormat = func(logger *Logger, logLevel level.Level, message any) string {
+		return fmt.Sprintf("[%s] [%-5s] %v", logger.name, logLevel.Name, message)
+	}
 	_LevelNameTime logFormat = func(logger *Logger, logLevel level.Level, message any) string {
 		return fmt.Sprintf("[%-5s] [%s] [%s] %v",
 			logLevel.Name, logger.name, time.Now().Format(time.TimeOnly), message)
 	}
+	_LevelTimeName logFormat = func(logger *Logger, logLevel level.Level, message any) string {
+		return fmt.Sprintf("[%-5s] [%s] [%s] %v",
+			logLevel.Name, time.Now().Format(time.TimeOnly), logger.name, message)
+	}
 	_LevelTime logFormat = func(logger *Logger, logLevel level.Level, message any) string {
 		return fmt.Sprintf("[%-5s] [%s] %v",
 			logLevel.Name, time.Now().Format(time.TimeOnly), message)
+	}
+	_TimeLevel logFormat = func(logger *Logger, logLevel level.Level, message any) string {
+		return fmt.Sprintf("[%s] [%-5s] %v",
+			time.Now().Format(time.TimeOnly), logLevel.Name, message)
 	}
 	_Name logFormat = func(logger *Logger, logLevel level.Level, message any) string {
 		return fmt.Sprintf("[%s] %v", logger.name, message)
@@ -71,6 +82,10 @@ var (
 	_NameTime logFormat = func(logger *Logger, logLevel level.Level, message any) string {
 		return fmt.Sprintf("[%s] [%s] %v",
 			logger.name, time.Now().Format(time.TimeOnly), message)
+	}
+	_TimeName logFormat = func(logger *Logger, logLevel level.Level, message any) string {
+		return fmt.Sprintf("[%s] [%s] %v",
+			time.Now().Format(time.TimeOnly), logger.name, message)
 	}
 	_Time logFormat = func(logger *Logger, logLevel level.Level, message any) string {
 		return fmt.Sprintf("[%s] %v", time.Now().Format(time.TimeOnly), message)
@@ -94,14 +109,22 @@ func SetDefaultFormat(logFormat format.LogFormat) {
 		_DefaultFormat = _Level
 	case format.LevelName:
 		_DefaultFormat = _LevelName
+	case format.NameLevel:
+		_DefaultFormat = _NameLevel
 	case format.LevelTime:
 		_DefaultFormat = _LevelTime
+	case format.TimeLevel:
+		_DefaultFormat = _TimeLevel
 	case format.LevelNameTime:
 		_DefaultFormat = _LevelNameTime
+	case format.LevelTimeName:
+		_DefaultFormat = _LevelTimeName
 	case format.Name:
 		_DefaultFormat = _Name
 	case format.NameTime:
 		_DefaultFormat = _NameTime
+	case format.TimeName:
+		_DefaultFormat = _TimeName
 	case format.Time:
 		_DefaultFormat = _Time
 	default:
